@@ -315,3 +315,7 @@ wave.deploy.yaml
 dev-prometheus-cert.yaml
 dev-traefik-cert.yaml
 dev-wave-cert-prod.yaml
+
+.terraform.lock.hcl
+terraform.tfstate.*
+.terraform
