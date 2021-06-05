@@ -97,6 +97,8 @@ services:
       - "traefik.http.routers.website.middlewares=website-compress"
       - "traefik.http.middlewares.website-compress.compress=true"
     environment:
+      - ENABLE_HORIZON=TRUE
+      - CRONTAB_ACTIVE=TRUE
       - GEN_LV_ENV=TRUE
       - LVENV_APP_NAME=$APP_NAME
       - LVENV_APP_ENV=$APP_ENV

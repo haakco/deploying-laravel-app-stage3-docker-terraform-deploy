@@ -111,6 +111,8 @@ services:
       - "traefik.http.routers.website.middlewares=website-compress"
       - "traefik.http.middlewares.website-compress.compress=true"
     environment:
+      - ENABLE_HORIZON=TRUE
+      - CRONTAB_ACTIVE=TRUE
       - GEN_LV_ENV=TRUE
       - LVENV_APP_NAME=HaakCo Wave
       - LVENV_APP_ENV=production
