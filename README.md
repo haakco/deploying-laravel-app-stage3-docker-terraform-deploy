@@ -54,7 +54,7 @@ We'll then use this image to create our final image for deployment.
 We split the images to save us time rebuilding the whole image every time we do a code change.
 
 The final docker file and anything needed to build it can be found
-at [```./infra/docker/stage3-docker-ubuntu-php-lv/```](infra/docker/stage3-docker-ubuntu-php-lv)
+at [```./infra/docker/stage3-docker-ubuntu-php-lv/```](infra/docker/docker-deploying-laravel-app-ubuntu-php-lv)
 
 To make future upgrading easier, we'll use a variable for PHP and Ubuntu versions.
 
@@ -192,7 +192,7 @@ We'll need a config for the Nginx server.
 
 For this, we'll create a ```files``` subdirectory directory and add the config files for Nginx in a subdirectory.
 
-[```Stage_3/infra/docker/stage3-docker-ubuntu-php-lv/files/nginx_config```](./infra/docker/stage3-docker-ubuntu-php-lv/files/nginx_config)
+[```Stage_3/infra/docker/stage3-docker-ubuntu-php-lv/files/nginx_config```](infra/docker/docker-deploying-laravel-app-ubuntu-php-lv/files/nginx_config)
 
 One thing to note is that we send the Nginx logs to stdout and stderr, allowing more straightforward access to the logs.
 
@@ -352,7 +352,7 @@ CMD ["/start.sh"]
 That covers everything in the Docker file.
 
 Let's just go over what
-the [```./infra/docker/stage3-docker-ubuntu-php-lv/files/start.sh```](./infra/docker/stage3-docker-ubuntu-php-lv/files/start.sh)
+the [```./infra/docker/stage3-docker-ubuntu-php-lv/files/start.sh```](infra/docker/docker-deploying-laravel-app-ubuntu-php-lv/files/start.sh)
 does. This file gets run every time we start the image.
 
 First we make sure that certain directories we need exist.

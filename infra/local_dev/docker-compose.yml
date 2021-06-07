@@ -84,7 +84,7 @@ services:
       - "traefik.http.middlewares.redis-commander-auth.basicauth.users=${TRAEFIK_BASIC_USER}:${TRAEFIK_BASIC_PASSWORD_ENCODED}"
       - "traefik.http.middlewares.redis-commander-compress.compress=true"
   website:
-    image: haakco/stage3-ubuntu-20.04-php7.4-lv
+    image: haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv
     container_name: "web"
     hostname: web.server
     restart: always
