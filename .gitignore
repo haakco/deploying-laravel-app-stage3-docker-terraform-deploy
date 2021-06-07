@@ -319,3 +319,5 @@ dev-wave-cert-prod.yaml
 .terraform.lock.hcl
 terraform.tfstate.*
 .terraform
+
+.env
