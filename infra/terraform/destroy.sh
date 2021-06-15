@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-export DOMAIN_NAME=example.com
-
 if [[ -z ${CLOUDFLARE_API_TOKEN} ]]; then
   echo "Please enter the CLOUDFLARE_API_TOKEN or set the env variable: "
   read -r CLOUDFLARE_API_TOKEN
@@ -21,6 +19,12 @@ export DIGITALOCEAN_TOKEN
 
 export TF_VAR_do_token="${DIGITALOCEAN_TOKEN}"
 
-export TF_VAR_dns_domain="${DOMAIN_NAME}"
+export TF_VAR_dns_domain=""
+export TF_VAR_traefik_username=""
+export TF_VAR_traefik_password=""
+export TF_VAR_traefik_auth=""
+export TF_VAR_wave_registry_username=""
+export TF_VAR_wave_registry_password=""
 
-terraform apply -refresh=true -parallelism=10
+export TF_VAR_grafana_admin_password=""
+terraform destroy -refresh=false -parallelism=1

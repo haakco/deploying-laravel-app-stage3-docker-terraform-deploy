@@ -48,10 +48,10 @@ build {
       "update-locale LANG=en_US.UTF-8",
       "DEBIAN_FRONTEND=noninteractive apt-get update",
       "DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y",
-      "DEBIAN_FRONTEND=noninteractive apt-get autoremove -y",
       "DEBIAN_FRONTEND=noninteractive apt-get install -y software-properties-common apt-transport-https",
-      "DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip python3 python3-apt ansible",
-      "DEBIAN_FRONTEND=noninteractive apt-get autoremove -y"]
+      "DEBIAN_FRONTEND=noninteractive apt-get install -y python3-pip python3 python3-apt",
+      "DEBIAN_FRONTEND=noninteractive apt-get autoremove -y",
+      "DEBIAN_FRONTEND=noninteractive pip3 install ansible"]
     inline_shebang = "/bin/sh -x"
   }
 

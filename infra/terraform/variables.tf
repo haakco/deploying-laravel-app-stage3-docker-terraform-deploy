@@ -7,7 +7,7 @@ variable region {
 }
 
 variable base_web_snapshot_name {
-  default = "lv-example-docker-ubuntu-20-04-x64-fra1-20210513131447"
+  default = "lv-example-docker-ubuntu-20-04-x64-fra1-20210615130853"
 }
 
 variable server_size {

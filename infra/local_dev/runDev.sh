@@ -2,9 +2,26 @@
 WAVE_DIR=$(realpath "${PWD}/../../../deploying-laravel-app-ubuntu-20.04-php7.4-lv-wave")
 export WAVE_DIR
 
-export TRAEFIK_EMAIL=cert@example.com
-export CLOUDFLARE_API_TOKEN=$CLOUDFLARE_API_TOKEN
 export DOMAIN_NAME=dev.example.com
+
+export "TRAEFIK_EMAIL=cert@${DOMAIN_NAME}"
+
+if [[ -z ${CLOUDFLARE_API_TOKEN} ]]; then
+  echo "Please enter the CLOUDFLARE_API_TOKEN or set the env variable: "
+  read -r CLOUDFLARE_API_TOKEN
+else
+  echo "Read CLOUDFLARE_API_TOKEN from env"
+fi
+
+export CLOUDFLARE_API_TOKEN
+
+export APP_NAME=HaakCo
+export APP_ENV=local
+export DB_HOST=postgres
+export REDIS_PASS=null
+export MAIL_USERNAME=""
+export MAIL_PASSWORD=""
+export MAIL_ENCRYPTION=null
 export DB_NAME=db_example
 export DB_USER=user_example
 export DB_PASS=password_example

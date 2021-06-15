@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 export DOMAIN_NAME=example.com
-export TRAEFIK_EMAIL=cert@example.com
+export TRAEFIK_EMAIL="cert@${DOMAIN_NAME}"
+
 export DB_NAME=db_example
 export DB_USER=user_example
 export DB_PASS=password_example
