@@ -139,8 +139,6 @@ services:
       - LVENV_WAVE_BAR=true
       - LVENV_TRUSTED_PROXIES=$TRUSTED_PROXIES
       - LVENV_ASSET_URL=' '
-    ports:
-      - "9080:80"
     volumes:
       - "$WAVE_DIR:/var/www/site"
 volumes:
