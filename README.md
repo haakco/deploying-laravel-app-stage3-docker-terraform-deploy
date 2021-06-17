@@ -51,20 +51,20 @@ https://github.com/haakco/deploying-laravel-app-docker-ubuntu-php-lv
 We'll start by setting up a local development enviroment.
 
 To make life simpler please add the following DNS entries to your DNS server pointing them at ```127.0.0.1```.
+
 * ```*.dev.example.com```
 * ```dev.example.com```
 
-This will allow you to use any url in the ```dev.example.com``` for local development without having to create specific 
+This will allow you to use any url in the ```dev.example.com``` for local development without having to create specific
 entries for each end point.
 
 For the production enviroment we'll be reusing most of the code we create for Dev.
 
 The only thing I would suggest you also look into if you are on Windows or Mac is https://mutagen.io/.
 
-This can make quiet a big difference in the speed of your running containers. 
+This can make quiet a big difference in the speed of your running containers.
 
 I'll be using docker-compose files to set run everything. This just makes things a bit simpler.
-
 
 All the file can be found at [./infra/local_dev](./infra/local_dev)
 
@@ -76,11 +76,10 @@ These are set via [```runDev.sh```](./infra/local_dev/runDev.sh).
 
 ### Proxy
 
-To make things simpler with docker we'll be adding Traefik to handle SSL cert generation,
-via LetsEncrypt, and to route the relevant URL to the correct docker container.
+To make things simpler with docker we'll be adding Traefik to handle SSL cert generation, via LetsEncrypt, and to route
+the relevant URL to the correct docker container.
 
-We'll also be using it to handle basic auth for any of our applications that don't have auth
-built in.
+We'll also be using it to handle basic auth for any of our applications that don't have auth built in.
 
 ```yaml
   traefik:
@@ -134,34 +133,34 @@ You'll also see that the config contains the CloudFlare Api Token we've generate
 
 This is to allow traefik to generate certificates via the DNS method.
 
-This tends to simplify some things as we can generate the certs before everything is up, 
-and it allows us to generate wildcard certificates if we want.
+This tends to simplify some things as we can generate the certs before everything is up, and it allows us to generate
+wildcard certificates if we want.
 
-We pass this in via the environmental variable ```${CLOUDFLARE_API_TOKEN}```. We also pass an email that 
-LetsEncrypt will use to notify on ```${TRAEFIK_EMAIL}```.
+We pass this in via the environmental variable ```${CLOUDFLARE_API_TOKEN}```. We also pass an email that LetsEncrypt
+will use to notify on ```${TRAEFIK_EMAIL}```.
 
 Traefik is also configured to auto redirect http to https.
 
-By default, Traefik is configured to not route any traffic. Rather it will watch the container labels to see what it must do.
+By default, Traefik is configured to not route any traffic. Rather it will watch the container labels to see what it
+must do.
 
 ```yaml
 labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.$DOMAIN_NAME`)"
+  - "traefik.enable=true"
+  - "traefik.http.routers.traefik.rule=Host(`traefik.$DOMAIN_NAME`)"
 ```
 
 Here you can see the labels we have for the traefik container.
 
-We first tell traefik we want it enabled for this container. 
+We first tell traefik we want it enabled for this container.
 
-Next we say we want to route the URL traefik.$DOMAIN_NAME (This becomes traefik.example.com) to the traefik
-container.
-
+Next we say we want to route the URL traefik.$DOMAIN_NAME (This becomes traefik.example.com) to the traefik container.
 
 ```yaml
         - "traefik.http.routers.traefik.entrypoints=websecure"
         - "traefik.http.routers.traefik.service=api@internal"
 ```
+
 We next say we want to route https traefik to the traefik dashboard.
 
 Next we ask traefik to generate an SSL certificate via LetsEncrypt
@@ -190,15 +189,15 @@ TRAEFIK_BASIC_PASSWORD_ENCODED=$(docker run --rm -ti xmartlabs/htpasswd "${TRAEF
 export TRAEFIK_BASIC_PASSWORD_ENCODED
 ```
 
-To summarise the labels it will make it that https://traefik.example.com is routed to the traefik dashboard, 
-and the user will be prompted for the basic auth credentials before allowing access.
+To summarise the labels it will make it that https://traefik.example.com is routed to the traefik dashboard, and the
+user will be prompted for the basic auth credentials before allowing access.
 
 ### Database
+
 Next we add the database.
 
-We'll be using the default [PostgreSQL docker hub image](https://hub.docker.com/_/postgres), and we'll be
-locking our version down so that if there is a new release our DB doesn't break, but we'll still get updates for
-the same version.
+We'll be using the default [PostgreSQL docker hub image](https://hub.docker.com/_/postgres), and we'll be locking our
+version down so that if there is a new release our DB doesn't break, but we'll still get updates for the same version.
 
 At this time the latest version is 13, so we'll be using tag ```:13```.
 
@@ -216,24 +215,25 @@ At this time the latest version is 13, so we'll be using tag ```:13```.
       - "5432:5432"
     volumes:
       - "postgres_vol:/var/lib/postgresql/data"
-volumes:
-  db_pgmaster_vol: {}
+  volumes:
+    db_pgmaster_vol: { }
 ```
 
 We use environmental variables to set the database name, user and password.
 
-We also tell docker we want the database to be external visible on port 5432. 
+We also tell docker we want the database to be external visible on port 5432.
 
 ***(!! Do not expose this port in Production.)***
 
-We also create a volume to store the data. 
+We also create a volume to store the data.
 
 Just be carefully if you delete this volume you will delete the all the data.
 
 ### Redis
 
-Next we want to add redis at the same time we'll be adding [redis commander](https://github.com/joeferner/redis-commander)
-to give use a basic admin interface. 
+Next we want to add redis at the same time we'll be
+adding [redis commander](https://github.com/joeferner/redis-commander)
+to give use a basic admin interface.
 
 ```yaml
   redis:
@@ -265,8 +265,8 @@ to give use a basic admin interface.
       - "traefik.http.routers.redis-commander.middlewares=redis-commander-auth, redis-commander-compress"
       - "traefik.http.middlewares.redis-commander-auth.basicauth.users=${TRAEFIK_BASIC_USER}:${TRAEFIK_BASIC_PASSWORD_ENCODED}"
       - "traefik.http.middlewares.redis-commander-compress.compress=true"
-volumes
-  db_redis_vol: {}
+    volumes
+  db_redis_vol: { }
 ```
 
 Once again we make Redis accessible externally.
@@ -276,7 +276,8 @@ Once again we make Redis accessible externally.
       - "6379:6379"
 ```
 
-We then also let traefik know that we want the ```rediscommander.$DOMAIN_NAME``` to be routed to the redis commander container.
+We then also let traefik know that we want the ```rediscommander.$DOMAIN_NAME``` to be routed to the redis commander
+container.
 
 ```yaml
     labels:
@@ -299,68 +300,68 @@ We are using the image created previously ```haakco/deploying-laravel-app-ubuntu
 
 ```yaml
 website:
-    image: haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv
-    container_name: "web"
-    hostname: web.server
-    restart: always
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.website.rule=Host(`$DOMAIN_NAME`,`www.$DOMAIN_NAME`)"
-      - "traefik.http.routers.website.entrypoints=websecure"
-      - "traefik.http.routers.website.tls=true"
-      - "traefik.http.routers.website.tls.certresolver=le"
-      - "traefik.http.routers.website.middlewares=website-compress"
-      - "traefik.http.middlewares.website-compress.compress=true"
-    environment:
-      - ENABLE_HORIZON=FALSE
-      - CRONTAB_ACTIVE=TRUE
-      - GEN_LV_ENV=TRUE
-      - LVENV_APP_NAME=$APP_NAME
-      - LVENV_APP_ENV=$APP_ENV
-      - LVENV_APP_KEY=$APP_KEY
-      - LVENV_APP_DEBUG=true
-      - LVENV_APP_LOG_LEVEL=debug
-      - LVENV_APP_URL=https://$DOMAIN_NAME
-      - LVENV_DB_CONNECTION=pgsql
-      - LVENV_DB_HOST=$DB_HOST
-      - LVENV_DB_PORT=5432
-      - LVENV_DB_DATABASE=$DB_NAME
-      - LVENV_DB_USERNAME=$DB_USER
-      - LVENV_DB_PASSWORD=$DB_PASS
-      - LVENV_BROADCAST_DRIVER=log
-      - LVENV_CACHE_DRIVER=redis
-      - LVENV_SESSION_DRIVER=redis
-      - LVENV_SESSION_LIFETIME=9999
-      - LVENV_QUEUE_DRIVER=redis
-      - LVENV_REDIS_HOST=$REDIS_HOST
-      - LVENV_REDIS_PASSWORD=$REDIS_PASS
-      - LVENV_REDIS_PORT=6379
-      - LVENV_MAIL_DRIVER=smtp
-      - LVENV_MAIL_HOST=smtp.mailtrap.io
-      - LVENV_MAIL_PORT=2525
-      - LVENV_MAIL_USERNAME=$MAIL_USERNAME
-      - LVENV_MAIL_PASSWORD=$MAIL_PASSWORD
-      - LVENV_MAIL_ENCRYPTION=$MAIL_ENCRYPTION
-      - LVENV_PUSHER_APP_ID=
-      - LVENV_PUSHER_APP_KEY=
-      - LVENV_PUSHER_APP_SECRET=
-      - LVENV_REDIS_CLIENT=phpredis
-      - LVENV_JWT_SECRET=$JWT_SECRET
-      - LVENV_PADDLE_VENDOR_ID=
-      - LVENV_PADDLE_VENDOR_AUTH_CODE=
-      - LVENV_PADDLE_ENV=sandbox
-      - LVENV_WAVE_DOCS=true
-      - LVENV_WAVE_DEMO=true
-      - LVENV_WAVE_BAR=true
-      - LVENV_TRUSTED_PROXIES=$TRUSTED_PROXIES
-      - LVENV_ASSET_URL=' '
-    volumes:
-      - "$WAVE_DIR:/var/www/site"
+  image: haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv
+  container_name: "web"
+  hostname: web.server
+  restart: always
+  labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.website.rule=Host(`$DOMAIN_NAME`,`www.$DOMAIN_NAME`)"
+    - "traefik.http.routers.website.entrypoints=websecure"
+    - "traefik.http.routers.website.tls=true"
+    - "traefik.http.routers.website.tls.certresolver=le"
+    - "traefik.http.routers.website.middlewares=website-compress"
+    - "traefik.http.middlewares.website-compress.compress=true"
+  environment:
+    - ENABLE_HORIZON=FALSE
+    - CRONTAB_ACTIVE=TRUE
+    - GEN_LV_ENV=TRUE
+    - LVENV_APP_NAME=$APP_NAME
+    - LVENV_APP_ENV=$APP_ENV
+    - LVENV_APP_KEY=$APP_KEY
+    - LVENV_APP_DEBUG=true
+    - LVENV_APP_LOG_LEVEL=debug
+    - LVENV_APP_URL=https://$DOMAIN_NAME
+    - LVENV_DB_CONNECTION=pgsql
+    - LVENV_DB_HOST=$DB_HOST
+    - LVENV_DB_PORT=5432
+    - LVENV_DB_DATABASE=$DB_NAME
+    - LVENV_DB_USERNAME=$DB_USER
+    - LVENV_DB_PASSWORD=$DB_PASS
+    - LVENV_BROADCAST_DRIVER=log
+    - LVENV_CACHE_DRIVER=redis
+    - LVENV_SESSION_DRIVER=redis
+    - LVENV_SESSION_LIFETIME=9999
+    - LVENV_QUEUE_DRIVER=redis
+    - LVENV_REDIS_HOST=$REDIS_HOST
+    - LVENV_REDIS_PASSWORD=$REDIS_PASS
+    - LVENV_REDIS_PORT=6379
+    - LVENV_MAIL_DRIVER=smtp
+    - LVENV_MAIL_HOST=smtp.mailtrap.io
+    - LVENV_MAIL_PORT=2525
+    - LVENV_MAIL_USERNAME=$MAIL_USERNAME
+    - LVENV_MAIL_PASSWORD=$MAIL_PASSWORD
+    - LVENV_MAIL_ENCRYPTION=$MAIL_ENCRYPTION
+    - LVENV_PUSHER_APP_ID=
+    - LVENV_PUSHER_APP_KEY=
+    - LVENV_PUSHER_APP_SECRET=
+    - LVENV_REDIS_CLIENT=phpredis
+    - LVENV_JWT_SECRET=$JWT_SECRET
+    - LVENV_PADDLE_VENDOR_ID=
+    - LVENV_PADDLE_VENDOR_AUTH_CODE=
+    - LVENV_PADDLE_ENV=sandbox
+    - LVENV_WAVE_DOCS=true
+    - LVENV_WAVE_DEMO=true
+    - LVENV_WAVE_BAR=true
+    - LVENV_TRUSTED_PROXIES=$TRUSTED_PROXIES
+    - LVENV_ASSET_URL=' '
+  volumes:
+    - "$WAVE_DIR:/var/www/site"
 ```
 
 As mentioned this image doesn't hold the Laravel code.
 
-So to get that in the container we first checkout the git repository 
+So to get that in the container we first checkout the git repository
 
 ```shell
 git clone https://github.com/haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv-wave
@@ -370,7 +371,7 @@ We then add this directory as a volume for the container.
 
 ```yaml
 volumes:
-      - "$WAVE_DIR:/var/www/site"
+  - "$WAVE_DIR:/var/www/site"
 ```
 
 We put the local path in the ```WAVE_DIR``` environmental variable.
@@ -379,7 +380,8 @@ This allows us to edit the files locally but test via an enviroment that is as c
 
 Once again we have the URL ```$DOMAIN_NAME``` routed into the container and certs generated vie Traefik.
 
-Finally, we configure how we want the container to run, and the setting for the .env file via the environmental variables.
+Finally, we configure how we want the container to run, and the setting for the .env file via the environmental
+variables.
 
 Please see https://github.com/haakco/deploying-laravel-app-docker-ubuntu-php-lv to see what all the variables do.
 
@@ -405,12 +407,12 @@ This can be used to do things like run composer installs or any artisan commands
 
 If you need root access you can rather use ```enterWebRoot.sh```.
 
-Finally, there is the ```stopDev.sh``` to stop everything. 
+Finally, there is the ```stopDev.sh``` to stop everything.
 
 ## Production enviroment
 
-The production environment is basically going to be a merging of the Dev enviroment with the Packer, Ansible and Terraform
-from the previous steps.
+The production environment is basically going to be a merging of the Dev enviroment with the Packer, Ansible and
+Terraform from the previous steps.
 
 ### Docker image with code
 
@@ -420,9 +422,11 @@ To do this I've created a git repository which is basically a clone of the Wave 
 
 * https://github.com/haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv-wave
 
-I've then gone and added a [Dockerfile](https://github.com/haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv-wave/blob/main/Dockerfile).
+I've then gone and added
+a [Dockerfile](https://github.com/haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv-wave/blob/main/Dockerfile).
 
-This image is then built on [Docker Hub](https://hub.docker.com/repository/docker/haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv-wave)
+This image is then built
+on [Docker Hub](https://hub.docker.com/repository/docker/haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv-wave)
 
 * https://hub.docker.com/repository/docker/haakco/deploying-laravel-app-ubuntu-20.04-php7.4-lv-wave
 
@@ -454,8 +458,8 @@ RUN find /usr/share/GeoIP -not -user www-data -execdir chown "www-data:" {} \+ &
     find /var/www/site -not -user www-data -execdir chown "www-data:" {} \+
 ```
 
-It's simply starting with the php [Docker image](https://github.com/haakco/deploying-laravel-app-docker-ubuntu-php-lv) 
-we created previously. 
+It's simply starting with the php [Docker image](https://github.com/haakco/deploying-laravel-app-docker-ubuntu-php-lv)
+we created previously.
 
 We then add the Laravel code to ```/var/www/site``` and do a composer install.
 
@@ -469,16 +473,16 @@ This step mirror the Stage 3 step very closely, so I'm not going to go into to m
 
 The big changes are that we now install docker via Ansible, and we add a composer file in the ```docker_deploy``` role.
 
-We are also not using Digital Oceans DB or Redis but the docker versions. 
+We are also not using Digital Oceans DB or Redis but the docker versions.
 
 I've done this more to show you how to do all the different options.
 
-Though I would recommend that you rather use Digital Oceans DB and Redis. 
+Though I would recommend that you rather use Digital Oceans DB and Redis.
 
 Mainly as it just reduces the amount of things you will need to manage.
 
-Another change from the local dev is that we'll be mounting in directories rather than creating volumes. Then
-main reason is that it reduces the chance of you accidentally deleting your db. 
+Another change from the local dev is that we'll be mounting in directories rather than creating volumes. Then main
+reason is that it reduces the chance of you accidentally deleting your db.
 
 I know more than one person who ran a volume prune or volume rm with out thinking and accidentally removed there DB
 files.
@@ -487,12 +491,13 @@ files.
 
 Bellow is the ```docker_deploy``` task.
 
-It basically makes sure the directories that will be mounted in exist, copies the copose file over and 
-adds an entry to cron to run the compose file on every reboot.
+It basically makes sure the directories that will be mounted in exist, copies the copose file over and adds an entry to
+cron to run the compose file on every reboot.
 
 This is to just make sure that on a reboot it will go back into a working state.
 
-Please alter the [./infra/ansible/roles/docker_deploy/files/remote_docker_prod/runProd.sh](./infra/ansible/roles/docker_deploy/files/remote_docker_prod/runProd.sh)
+Please alter
+the [./infra/ansible/roles/docker_deploy/files/remote_docker_prod/runProd.sh](./infra/ansible/roles/docker_deploy/files/remote_docker_prod/runProd.sh)
 and set the environmental variable to what you would like.
 
 ```yaml
@@ -542,9 +547,10 @@ Once again we are going to create a digital ocean server image using packer and 
 
 Nothing is different from the Stage 3 process.
 
-Once you have the new image snap shot name. 
+Once you have the new image snap shot name.
 
-Please update the ```base_web_snapshot_name``` variable in the terraform file [./infra/terraform/variables.tf](./infra/terraform/variables.tf). 
+Please update the ```base_web_snapshot_name``` variable in the terraform
+file [./infra/terraform/variables.tf](./infra/terraform/variables.tf).
 
 #### Terraform apply
 
@@ -552,7 +558,7 @@ Now just check over all the terraform variable files and make any alterations th
 
 Once you've gone through the terraform files and altered the variable to your local enviroment.
 
-Remember to then set  the CLOUDFLARE_API_TOKEN and DIGITALOCEAN_TOKEN environmental variables.
+Remember to then set the CLOUDFLARE_API_TOKEN and DIGITALOCEAN_TOKEN environmental variables.
 
 I would recommend using the script provided in Stage 3 to make your life simpler.
 
