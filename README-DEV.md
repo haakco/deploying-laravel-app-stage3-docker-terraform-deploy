@@ -35,7 +35,7 @@ We'll also be using it to handle basic auth for any of our applications that don
 
 ```yaml
   traefik:
-    image: "traefik:v2.4"
+    image: "traefik"
     container_name: "traefik"
     hostname: traefik.server
     environment:

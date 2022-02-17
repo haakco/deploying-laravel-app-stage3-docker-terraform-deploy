@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   traefik:
-    image: "traefik:v2.4"
+    image: "traefik"
     container_name: "traefik"
     hostname: traefik.server
     environment:
