@@ -42,7 +42,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "${PWD}/traefik:/data"
   postgres:
-    image: postgres:13
+    image: postgres:14
     container_name: "postgres"
     hostname: pg.server
     restart: always

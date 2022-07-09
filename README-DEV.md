@@ -155,7 +155,7 @@ At this time the latest version is 13, so we'll be using tag ```:13```.
 
 ```yaml
   postgres:
-    image: postgres:13
+    image: postgres:14
     container_name: "postgres"
     hostname: pg.server
     restart: always
